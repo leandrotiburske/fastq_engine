@@ -1,0 +1,8 @@
+.DS_store
+.env
+*/__pycache__/*
+*.log
+*.log*
+work/
+null/
+.nextflow/

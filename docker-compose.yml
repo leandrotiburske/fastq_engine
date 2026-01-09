@@ -1,0 +1,37 @@
+version: '3.9'
+services:
+
+  rabbitmq:
+    container_name: rabbitmq
+    image: rabbitmq:management
+    environment:
+      - RABBITMQ_DEFAULT_USER=${USERNAME}
+      - RABBITMQ_DEFAULT_PASS=${PASSWORD}
+    ports:
+      - 5672:5672
+      - 15672:15672
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq/
+      - rabbitmq_logs:/var/log/rabbitmq
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD", "rabbitmqctl", "status" ]
+      interval: 5s
+      retries: 10
+
+  app:
+    platform: linux/amd64
+    build:
+      context: .
+    volumes:
+      - .:/app
+    env_file:
+      - .env
+    command: celery -A worker.celery_app worker --loglevel=info
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+
+volumes:
+  rabbitmq_data:
+  rabbitmq_logs:
