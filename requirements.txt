@@ -5,12 +5,17 @@ click==8.3.1
 click-didyoumean==0.3.1
 click-plugins==1.1.1.2
 click-repl==0.3.0
+flower==2.0.1
+humanize==4.15.0
 kombu==5.6.2
 packaging==25.0
+prometheus_client==0.23.1
 prompt_toolkit==3.0.52
 python-dateutil==2.9.0.post0
 python-dotenv==1.2.1
+pytz==2025.2
 six==1.17.0
+tornado==6.5.4
 tzdata==2025.3
 tzlocal==5.3.1
 vine==5.1.0

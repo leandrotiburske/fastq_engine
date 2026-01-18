@@ -23,15 +23,51 @@ services:
     platform: linux/amd64
     build:
       context: .
-    volumes:
-      - .:/app
+    environment:
+      - NXF_HOME=/root/.nextflow
     env_file:
       - .env
-    command: celery -A worker.celery_app worker --loglevel=info
+    command: celery -A worker.celery_app worker --loglevel=info --concurrency=1
     depends_on:
       rabbitmq:
         condition: service_healthy
 
+  flower:
+    build:
+      context: .
+    env_file:
+      - .env
+    environment:
+      - NXF_HOME=/root/.nextflow
+    command: celery -A worker.celery_app flower --port=5555
+    ports:
+      - 5555:5555
+    depends_on:
+      - app
+
+  db:
+    image: postgres:15
+    restart: always
+    ports:
+      - "5433:5433"
+    expose:
+      - "5433"
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    volumes:
+      - postgres_data_queue:/var/lib/postgresql/data
+    env_file:
+      - .env
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-U", "${POSTGRES_USER}", "-d", "${POSTGRES_DB}" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
 volumes:
   rabbitmq_data:
   rabbitmq_logs:
+  nextflow_cache:
+  postgres_data_queue:

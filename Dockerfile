@@ -1,13 +1,10 @@
-FROM python:3.11-slim-bookworm
+FROM --platform=linux/amd64 continuumio/miniconda3:25.3.1-1
 
 WORKDIR /app
-
-ENV JAVA_TOOL_OPTIONS="-Xint"
 
 RUN apt-get update && apt-get install -y \
     git \
     curl \
-    git \
     openjdk-17-jdk-headless \
     unzip \
     zip \
@@ -20,5 +17,7 @@ RUN curl -s https://get.nextflow.io | bash \
 
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+
+RUN nextflow pull nf-core/sarek
 
 COPY . .
