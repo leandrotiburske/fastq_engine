@@ -18,7 +18,7 @@ celery_app = Celery(
 )
 
 @celery_app.task(bind=True, max_retries=5, default_retry_delay=60)
-def test_nextflow(self, task_id: int, samplesheet_path: str, patient_name: str, patient_id: int):
+def submit_nextflow(self, task_id: int, samplesheet_path: str, patient_name: str, patient_id: int):
     """
     Run a test Nextflow pipeline (nf-core/sarek) and report progress.
     """

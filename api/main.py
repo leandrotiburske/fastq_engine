@@ -4,7 +4,7 @@ from fastapi import FastAPI, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from infra.main import get_db, Base, engine
 from crud.main import create_task, get_all_tasks, get_task, get_tasks_by_patient
-from worker.celery_app import test_nextflow
+from worker.celery_app import submit_nextflow
 
 Base.metadata.create_all(bind=engine)
 
@@ -47,7 +47,7 @@ async def submit_task(
         task = create_task(session, patient_id)
         print("Task created:", task.id)
 
-        test_nextflow.delay(task.id, samplesheet_path, patient_name, patient_id)
+        submit_nextflow.delay(task.id, samplesheet_path, patient_name, patient_id)
         print("Celery dispatched")
 
         return {
