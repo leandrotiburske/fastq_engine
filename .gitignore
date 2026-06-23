@@ -6,4 +6,7 @@
 work/
 null/
 .nextflow/
+samplesheets/
+fastqs/
+test/
 core
